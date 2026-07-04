@@ -1,0 +1,21 @@
+# MATLAB artifacts
+*.asv
+*.mat
+*.mex*
+slprj/
+octave-workspace
+
+# Saved model output produced by main.m
+code/benchmark.mat
+
+# Generated figures
+figures/
+*.eps
+*.pdf
+
+# Local Claude Code settings (machine-specific)
+.claude/settings.local.json
+
+# OS junk
+.DS_Store
+Thumbs.db
