@@ -8,10 +8,9 @@ octave-workspace
 # Saved model output produced by main.m
 code/benchmark.mat
 
-# Generated figures
+# Generated figures (reference PDFs such as h93/h93.pdf are tracked)
 figures/
 *.eps
-*.pdf
 
 # Local Claude Code settings (machine-specific)
 .claude/settings.local.json

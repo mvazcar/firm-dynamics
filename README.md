@@ -121,8 +121,15 @@ firm-dynamics/
 ├── data_summary_stats/        data series (copied from hns22_raw)
 ├── tests/
 │   └── check_benchmark.m      regression + homogeneity verification
-└── hns22_raw/                 original HNS22 code, untouched (reference)
+├── hns22_raw/                 original HNS22 code, untouched (reference)
+├── h92/                       single-type Hopenhayn (1992) model (see h92/README.md)
+└── h93/                       Hopenhayn & Rogerson (1993) calibration (see h93/README.md)
 ```
+
+The `h92/` and `h93/` folders are self-contained offshoots of the explicit-
+`p`/`w` model: `h92/` is the lean single-type Hopenhayn (1992) stationary
+model (no growth, costs in goods, no lifecycle); `h93/` is the same engine run
+with the Hopenhayn & Rogerson (1993) calibration (`tau = 0` baseline).
 
 ### File-by-file mapping from the original
 

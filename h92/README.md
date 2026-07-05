@@ -100,6 +100,9 @@ single type, goods-denominated costs — so the carried-over `ce` no longer
 corresponds to the two-type labor-cost benchmark. `ce` and `cf` are hardcoded
 constants at the top of `main.m`; recalibrate them for your application.)
 
+The **Hopenhayn & Rogerson (1993)** calibration of this same model engine
+lives in a separate folder, [`../h93`](../h93).
+
 ## Verification
 
 [`check_h92.m`](check_h92.m) confirms (all pass): free entry clears
