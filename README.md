@@ -123,13 +123,16 @@ firm-dynamics/
 │   └── check_benchmark.m      regression + homogeneity verification
 ├── hns22_raw/                 original HNS22 code, untouched (reference)
 ├── h92/                       single-type Hopenhayn (1992) model (see h92/README.md)
-└── h93/                       Hopenhayn & Rogerson (1993) calibration (see h93/README.md)
+└── h93/                       Hopenhayn & Rogerson (1993) w/ firing costs (see h93/README.md)
 ```
 
 The `h92/` and `h93/` folders are self-contained offshoots of the explicit-
-`p`/`w` model: `h92/` is the lean single-type Hopenhayn (1992) stationary
-model (no growth, costs in goods, no lifecycle); `h93/` is the same engine run
-with the Hopenhayn & Rogerson (1993) calibration (`tau = 0` baseline).
+`p`/`w` model. `h92/` is the lean single-type Hopenhayn (1992) stationary
+model (no growth, costs in goods, no lifecycle). `h93/` is a full **Hopenhayn
+& Rogerson (1993)** replication: a `τ=0` benchmark calibrated to the data, plus
+the 2-D `(s, n₋₁)` firing-cost model and a representative household that
+reproduce the paper's Table 3 policy experiments (`τ = 0.1, 0.2`). Both folders
+share the same calibration, so they differ only by model.
 
 ### File-by-file mapping from the original
 

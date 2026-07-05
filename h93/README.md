@@ -1,84 +1,123 @@
 # h93 — Hopenhayn & Rogerson (1993)
 
-The **Hopenhayn & Rogerson (1993, JPE)** firm-dynamics model at its baseline
-firing tax `tau = 0`, at which it reduces to the frictionless single-type
-Hopenhayn (1992) model. This folder reuses that model engine — identical to
-[`../h92`](../h92) — and supplies the HR1993 calibration in [`main.m`](main.m).
-The paper is included as [`h93.pdf`](h93.pdf).
+A replication of **Hopenhayn & Rogerson (1993, JPE)**, "Job Turnover and Policy
+Evaluation: A General Equilibrium Analysis" — the Hopenhayn (1992) industry
+model in general equilibrium, used to evaluate a tax on job destruction
+(firing costs). The paper is [`h93.pdf`](h93.pdf).
 
-Since `tau = 0` removes the labor-adjustment (firing) cost, the firm's state
-is just its productivity (no lagged-employment state), and the model is
-exactly the goods-cost, single-type, no-growth stationary Hopenhayn model of
-`../h92`. Only the calibration differs.
+The model has two regimes:
 
-## Calibration
+- **`τ = 0` benchmark** — with no firing cost the firm's problem is static in
+  employment, so the state is just productivity `s` (**1-D**). This is where
+  the model is calibrated to the data (Table 1/2).
+- **`τ > 0` experiments** — a firing cost `τ·max(0, n₋₁−n)` makes employment
+  sticky, so the state becomes `(s, n₋₁)` (**2-D**) and the policy is an
+  (S,s)-style inaction band. These are the policy experiments (Table 3).
 
-Parameter values follow the [VFI Toolkit replication of
-HR1993](https://github.com/vfitoolkit/vfitoolkit-matlab-replication/tree/master/HopenhaynRogerson1993):
+## Model
 
-| Parameter | Value |
-|---|---|
-| `beta` (discount factor) | `0.8` |
-| `alpha` (curvature, HR's `theta`) | `0.64` |
-| `cf` (fixed cost, goods) | `12` |
-| `ce` (entry cost, goods) | `40` |
-| log-AR(1) `log z' = a + rho·log z + eps` | `a = 0.078`, `rho = 0.93`, `sigma_eps = sqrt((1-rho)·0.53)` |
-| Tauchen grid | `n_z = 20`, half-width `q = 4` |
-| entrant distribution | uniform over the bottom 65% of productivity states |
+Firm state `(s, n₋₁)`, employment choice `n'`. Prices are explicit (`p`, `w`),
+with `p` fixed as the numeraire and `w` solved from free entry. Bellman
+(paper p.7), in dollars:
 
-Productivity enters production in levels (`z = exp(svec)`, `svec` the log-z
-grid), so `prof_fn`'s `p·exp(s)·n^alpha` equals HR's `p·z·n^alpha`. Costs are
-in goods (`p·cf`, `p·ce`), matching HR.
+```
+W(s, n₋₁) = max_{n'≥0} { p·s·n'^θ − w·n' − p·cf − w·τ·max(0, n₋₁−n')     ← return_fn
+                         + β·max[ E_{s'|s} W(s', n'),  −w·τ·n' ] }
+                                └ stay next period ┘  └ exit: fire all ┘
+```
 
-## Model files
+- **Exit is decided at the start of a period, before the new shock** (HR's
+  timing): a firm with shock `s` and chosen `n'` exits next period iff
+  `E_sW(s',n') < −w·τ·n'`. This is why the `max` sits on the *continuation*.
+- Costs: `cf`, `ce` in **goods** (dollar cost `p·cf`, `p·ce`); the firing cost
+  is in **wages** (`τ` = fraction of the period wage; `τ=0.2` ≈ one year's pay
+  for a 5-year period).
+- **Entrants** draw `s ~ v`, have `n₋₁ = 0`, and pay **no `cf`** (footnote 5).
+  Free entry: `Σ_s v(s)·W_e(s) = p·ce`.
+- **Household** (Hansen indivisible labor, `u=ln c`, `v=A·N`) pins the scale
+  (mass of entrants) via labor-market clearing and delivers the employment
+  and welfare numbers. `A` is set so employment `N = 0.6` at `τ = 0`.
 
-Same engine as `../h92` (copied so the folder is self-contained):
-`n.m`, `prof_fn.m`, `vfn.m`, `entry_residual.m`, `solve_wage.m`,
-`stationary.m`, `tauchen.m`. The only folder-specific file is
-[`main.m`](main.m) (the HR calibration) plus [`check_h93.m`](check_h93.m).
+Production is `s·n^θ` with `s` in **levels** (`s = exp(log s)`); the shock is
+`log s' = a + ρ·log s + ε`.
+
+## Calibration (paper values + calibrated to Table 1/2 targets)
+
+Structural (from the paper): `β=0.8`, `θ=0.64`, `ρ=0.93`,
+`σ_ε=(1−θ)√0.53=0.262`, 5-year period. Calibrated at `p=w=1` to the Table 1
+targets (mean size 61.7, 5-yr exit 0.37, avg entrant size 7.5): `a=0.061`
+(mean log s = 0.87), `cf=15.15`, `ce=14.91`, entrants uniform over the bottom
+74% of the `s`-grid. A fixed log-`s` grid has its top state at `n*=5000`.
+(This is the same calibration used by [`../h92`](../h92).)
+
+## Results
+
+**Table 2 (benchmark, `τ=0`)** — [`calibrate_benchmark.m`](calibrate_benchmark.m)
+matches average size (61.7 vs 61.2), exit rate (0.40 vs 0.39), job turnover
+(0.31 vs 0.30), growth variance (0.54 vs 0.55), and the firm/employment size
+distributions; the one soft moment is the survivor serial correlation (see
+Caveats).
+
+**Table 3 (policy, `τ = 0, 0.1, 0.2`)** — [`hr1993_2d.m`](hr1993_2d.m), at the
+`nz=100, na=250` grid:
+
+| | τ=0 | τ=.1 | τ=.2 | HR (0/.1/.2) |
+|---|---|---|---|---|
+| Price `z=p/w` (rel.) | 1.000 | 1.022 | 1.039 | 1.000 / 1.026 / 1.048 |
+| Consumption (output) | 100 | 97.9 | 96.2 | 100 / 97.5 / 95.4 |
+| Average productivity | 100 | 99.1 | 97.9 | 100 / 99.2 / 97.9 |
+| Total employment | 100 | 98.6 | 97.9 | 100 / 98.3 / 97.5 |
+| Utility-adj. consumption | 100 | 98.9 | 97.8 | 100 / 98.7 / 97.2 |
+| Average firm size | 61.7 | 62.8 | 64.2 | 61.2 / 61.8 / 65.1 |
+| Layoff costs / wage bill | 0 | .025 | .043 | 0 / .026 / .044 |
+| Job turnover rate | .308 | .253 | .216 | .30 / .26 / .22 |
+| Serial corr. log n | .79 | .83 | .84 | .92 / .94 / .94 |
+| Var. of growth | .54 | .43 | .37 | .55 / .45 / .39 |
+
+The model reproduces HR's headline findings: a firing tax of one year's wages
+(`τ=0.2`) **cuts job turnover ~30%**, **lowers average productivity ~2%**,
+**reduces employment ~2%**, and **costs ~2.2% of consumption in welfare** — the
+productivity/welfare channel that is the paper's main message. At `τ=0` the 2-D
+model collapses exactly to the 1-D benchmark (`w=1`, `z=1`, avg size 61.7).
+
+## Files
+
+```
+h93/
+├── calibrate_benchmark.m   tau=0 benchmark: calibrate + report Table 2 (1-D)
+├── hr1993_2d.m             tau>0 driver: solve, close with household, Table 3
+├── return_fn.m             per-period return p·s·n'^θ − w·n' − p·cf − w·g
+├── labor_adjustment.m      firing cost g(n',n₋₁) = τ·max(0, n₋₁−n')
+├── vfn_2d.m                2-D value iteration (nested exit max)
+├── stationary_2d.m         2-D stationary distribution + Table-3 aggregates
+├── solve_wage_2d.m         free entry Σ v·W_e = p·ce, solved for w
+├── household.m             representative-household closure (employment, welfare)
+├── tauchen_fixed.m         Tauchen transition on a fixed (top = n*=5000) grid
+├── README.md
+└── h93.pdf                 the paper
+```
 
 ## How to run
 
 ```matlab
 % From the h93/ directory:
-main         % solve and print the HR1993 equilibrium; saves h93_benchmark.mat
-check_h93    % verification (free entry clears + homogeneity)
+calibrate_benchmark   % tau=0 benchmark, reports Table 2
+hr1993_2d             % tau = 0,.1,.2 policy experiments, reports Table 3
 ```
 
-`main` prints, for example:
+`hr1993_2d` defaults to `nz=100, na=250` (tight match; a few minutes); set
+`P.nz=50, P.na=150` at the top for fast iteration.
 
-```
-=== Hopenhayn-Rogerson (1993) calibration, tau = 0 (p fixed, solve for w) ===
-  p (output price, numeraire) = 1
-  w (wage, solved)            = 0.483448724196798
-  z = p/w (relative price)    = 2.06847169089421
-  ce (hardcoded, goods)       = 40
-  cf (hardcoded, goods)       = 12
-  E[V(z0)] at solved w        = 40  (free entry: should equal p*ce)
-  entry-condition residual    = 7.105e-15
-  --
-  exit-threshold productivity (log z) = 0.783317 (grid index 9 of 20)
-  average firm size (employment)      = 235.302
-  average entrant size                = 92.7481
-  startup rate                        = 0.0300432
-  exit rate                           = 0.0300432
-```
+## Caveats
 
-## Normalization and comparison caveats
-
-- **Normalization.** HR1993 fix the wage (`w = 1`) and let the output price
-  clear free entry. This model instead fixes `p = 1` (numeraire) and solves
-  free entry `E[V(z0)] = p·ce` for `w`. Only `z = p/w` matters, so the real
-  allocation is identical; the reported `z = p/w` equals HR's equilibrium
-  output price under their `w = 1` normalization.
-- **Continuous vs grid employment.** This model uses the continuous
-  first-order-condition labor demand `n*(s)`, whereas the VFI Toolkit
-  discretizes employment on a grid capped at 5000. Upper-tail firm sizes (and
-  hence the average) therefore differ from the Toolkit's numbers even at
-  identical parameters.
-- **Entrant mass.** `mstar` is a free scale normalization here (the Toolkit
-  pins it via the representative household), so total employment `N` is not
-  directly comparable; firm sizes and turnover rates are.
+- **Survivor serial correlation** (0.79–0.84 vs HR 0.92–0.94): the *level* is
+  low because the exit threshold sits mid-distribution, so the surviving
+  sample is truncated (the *unconditional* autocorrelation is 0.93, exactly ρ).
+  It rises with `τ` as HR report. Closing the level would need HR's exact
+  (under-specified) entrant distribution / exit age-profile. The calibration
+  can be refined later.
+- **Formulation vs the VFI Toolkit**: this uses HR's own grid construction and
+  the paper's `σ_ε`; it is not bit-identical to other replications.
 
 ## Reference
 
