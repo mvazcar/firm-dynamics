@@ -111,6 +111,14 @@ exit-BEFORE-shock timing. On the shared calibration this yields, e.g., average
 firm size ≈ 114 and exit rate ≈ 0.11 here, versus ≈ 62 and ≈ 0.40 in `../h93`
 — a clean illustration of how much the exit-timing assumption matters.
 
+## Figures
+
+[`makefigs.m`](makefigs.m) generates result plots (saved to `figures/`):
+`fig1_size_distribution.png` (firm/employment size distribution vs HR data),
+`fig2_value_policy.png` (value function `V(s)`, labor demand `n*(s)`, and the
+exit threshold), and `fig3_cohort_survival.png` (cohort survival and exit
+hazard by age).
+
 ## Verification
 
 [`check_h92.m`](check_h92.m) confirms (all pass): free entry clears

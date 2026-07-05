@@ -76,3 +76,7 @@ end
 Ex=Ex/Sw; Ey=Ey/Sw; Vx=Exx/Sw-Ex^2; Vy=Eyy/Sw-Ey^2; Cxy=Exy/Sw-Ex*Ey;
 r.serial_n   = Cxy/sqrt(Vx*Vy) ;
 r.var_growth = Vx + Vy - 2*Cxy ;
+
+% ---- Raw objects for plotting (makefigs) -------------------------------
+r.MU = MU ; r.Npol = Npol ; r.emp = emp ; r.lag = lag ;
+r.survpol = survpol ; r.T = T ; r.n = n ; r.s = s ;

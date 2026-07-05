@@ -108,6 +108,18 @@ hr1993_2d             % tau = 0,.1,.2 policy experiments, reports Table 3
 `hr1993_2d` defaults to `nz=100, na=250` (tight match; a few minutes); set
 `P.nz=50, P.na=150` at the top for fast iteration.
 
+## Figures
+
+[`makefigs.m`](makefigs.m) generates the result plots (saved to `figures/`):
+
+- `fig1_decision_bands.png` — the employment decision-rule bands
+  `[n_l(s), n_u(s)]` for `τ = 0, 0.1, 0.2` (the visual form of HR Table 4),
+  plus the fractional band width showing the distortion grow with `τ`.
+- `fig2_table3_effects.png` — the Table-3 policy effects vs `τ`, model vs HR.
+- `fig3_size_distribution.png` — firm and employment size distributions.
+- `fig4_cohort_hazard.png` — cohort exit-hazard by age, model vs HR data.
+- `fig5_stationary_measure.png` — the stationary measure over `(s, n₋₁)`.
+
 ## Caveats
 
 - **Survivor serial correlation** (0.79–0.84 vs HR 0.92–0.94): the *level* is
