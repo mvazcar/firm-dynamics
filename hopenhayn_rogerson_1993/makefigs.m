@@ -1,7 +1,7 @@
 % =========================================================================
-% Figures for the Hopenhayn & Rogerson (1993) replication (h93). The paper
+% Figures for the Hopenhayn & Rogerson (1993) replication (hopenhayn_rogerson_1993). The paper
 % itself reports results in tables; these plots visualize the same objects.
-% Saves PNGs to h93/figures/.
+% Saves PNGs to hopenhayn_rogerson_1993/figures/.
 %   Fig 1  Employment decision-rule bands [n_l(s), n_u(s)] vs productivity,
 %          for tau = 0, 0.1, 0.2  (the visual form of HR Table 4).
 %   Fig 2  Table-3 policy effects vs tau (model vs HR).

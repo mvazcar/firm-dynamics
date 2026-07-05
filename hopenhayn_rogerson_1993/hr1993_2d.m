@@ -9,9 +9,9 @@
 %                           + beta*max( E_{s'|s} W(s',n'), -w*tau*n' ) }
 % Model pieces: return_fn.m, labor_adjustment.m, vfn_2d.m, solve_wage_2d.m,
 % stationary_2d.m, tauchen_fixed.m. At tau = 0 the state n_lag drops out and
-% this collapses to the 1-D benchmark (../h93/calibrate_benchmark).
+% this collapses to the 1-D benchmark (../hopenhayn_rogerson_1993/calibrate_benchmark).
 %
-% Calibration is shared with the h92/h93 benchmark (paper structural params;
+% Calibration is shared with the hopenhayn_1992/hopenhayn_rogerson_1993 benchmark (paper structural params;
 % a, cf, ce, entrant distribution calibrated to HR's Table 1/2 targets).
 % =========================================================================
 clc ; clear ; close all ;

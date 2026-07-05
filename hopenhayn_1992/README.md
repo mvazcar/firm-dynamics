@@ -1,4 +1,4 @@
-# h92 — single-type Hopenhayn (1992) model
+# hopenhayn_1992 — single-type Hopenhayn (1992) model
 
 A lean, single-type **Hopenhayn (1992)** stationary firm-dynamics model,
 obtained from the explicit-`p`/`w` recode in [`../code`](../code) (the HNS22
@@ -51,7 +51,7 @@ production labor `n*(s)` and total labor is `N = Σ n*(s)·mu(s)`.
 ## Files
 
 ```
-h92/
+hopenhayn_1992/
 ├── main.m            DEFAULT: fix p=1, hardcode ce & cf (goods), solve for w
 ├── stationary.m      stationary equilibrium (single type, no growth, no lifecycle)
 ├── solve_wage.m      solve free entry E[V(s0)] = p·ce for w
@@ -69,8 +69,8 @@ No data files are needed (the transition machinery that read them is removed).
 ## How to run
 
 ```matlab
-% From the h92/ directory:
-main         % solve and print the equilibrium; saves h92_benchmark.mat
+% From the hopenhayn_1992/ directory:
+main         % solve and print the equilibrium; saves hopenhayn_1992_benchmark.mat
 check_h92    % verification suite
 ```
 
@@ -94,21 +94,21 @@ check_h92    % verification suite
   exit rate                   = 0.1149
 ```
 
-## Calibration (shared with h93)
+## Calibration (shared with hopenhayn_rogerson_1993)
 
 The parameters hardcoded at the top of [`main.m`](main.m) are the
-**Hopenhayn & Rogerson (1993)** calibration, taken from [`../h93`](../h93), so
+**Hopenhayn & Rogerson (1993)** calibration, taken from [`../hopenhayn_rogerson_1993`](../hopenhayn_rogerson_1993), so
 this model and the HR1993 model use the *same* parameterization and grid:
 `beta = 0.8`, `theta = alpha = 0.64`, `rho = 0.93`,
 `sigma_eps = (1-theta)*sqrt(0.53) = 0.262`, `a = 0.061` (mean log s = 0.87),
 `cf = 15.15`, `ce = 14.91` (goods), a fixed log-`s` grid with the top state at
 `n* = 5000`, and entrants uniform over the bottom 74% of the grid.
 
-The only difference between this folder and `../h93` is the **model**, not the
-numbers: `h92` uses the exit-AFTER-shock timing `V(s) = max(0, prof + beta*E[V])`
-(a firm exits the moment its value would go negative), while `h93` uses HR's
+The only difference between this folder and `../hopenhayn_rogerson_1993` is the **model**, not the
+numbers: `hopenhayn_1992` uses the exit-AFTER-shock timing `V(s) = max(0, prof + beta*E[V])`
+(a firm exits the moment its value would go negative), while `hopenhayn_rogerson_1993` uses HR's
 exit-BEFORE-shock timing. On the shared calibration this yields, e.g., average
-firm size ≈ 114 and exit rate ≈ 0.11 here, versus ≈ 62 and ≈ 0.40 in `../h93`
+firm size ≈ 114 and exit rate ≈ 0.11 here, versus ≈ 62 and ≈ 0.40 in `../hopenhayn_rogerson_1993`
 — a clean illustration of how much the exit-timing assumption matters.
 
 ## Figures

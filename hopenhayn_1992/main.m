@@ -12,13 +12,13 @@
 %   * Solve the free-entry condition E[V(s0)] = p*ce for the wage w.
 %
 % CALIBRATION: the parameters below are the Hopenhayn & Rogerson (1993)
-% calibration (see ../h93), so this Hopenhayn (1992) model and the HR1993
-% model in ../h93 share the SAME parameterization and grid. The only thing
-% that differs between the two is the model itself: h92 uses the exit-AFTER-
-% shock timing V(s) = max(0, prof + beta*E[V]), whereas h93 uses HR's
+% calibration (see ../hopenhayn_rogerson_1993), so this Hopenhayn (1992) model and the HR1993
+% model in ../hopenhayn_rogerson_1993 share the SAME parameterization and grid. The only thing
+% that differs between the two is the model itself: hopenhayn_1992 uses the exit-AFTER-
+% shock timing V(s) = max(0, prof + beta*E[V]), whereas hopenhayn_rogerson_1993 uses HR's
 % exit-BEFORE-shock timing. Structural params (beta, theta, rho, sigma) come
 % straight from the paper; a, cf, ce and the entrant distribution were
-% calibrated in ../h93 to HR's Table 1/2 targets at p = w = 1.
+% calibrated in ../hopenhayn_rogerson_1993 to HR's Table 1/2 targets at p = w = 1.
 % =========================================================================
 clc
 clear
@@ -37,7 +37,7 @@ maxiter = 1000   ; % VFI cap (beta = 0.8 converges well within this)
 p     = 1 ;   % Output price (numeraire). Held fixed; the wage w is solved for.
 mstar = 1 ;   % Mass of entrants (scale normalization)
 
-% ---- Hardcoded costs, in GOODS (HR1993 calibration, from ../h93) -------
+% ---- Hardcoded costs, in GOODS (HR1993 calibration, from ../hopenhayn_rogerson_1993) -------
 CE = 14.9087 ;   % entry cost     (goods)
 CF = 15.1537 ;   % operating cost (goods)
 
@@ -102,4 +102,4 @@ fprintf('  startup rate                = %.6g\n', stateqbm.startup_rate) ;
 fprintf('  exit rate                   = %.6g\n\n', stateqbm.exit_rate) ;
 
 %% Save output
-save h92_benchmark
+save hopenhayn_1992_benchmark

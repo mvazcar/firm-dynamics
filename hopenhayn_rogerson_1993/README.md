@@ -1,9 +1,9 @@
-# h93 — Hopenhayn & Rogerson (1993)
+# hopenhayn_rogerson_1993 — Hopenhayn & Rogerson (1993)
 
 A replication of **Hopenhayn & Rogerson (1993, JPE)**, "Job Turnover and Policy
 Evaluation: A General Equilibrium Analysis" — the Hopenhayn (1992) industry
 model in general equilibrium, used to evaluate a tax on job destruction
-(firing costs). The paper is [`h93.pdf`](h93.pdf).
+(firing costs). The paper is [`hopenhayn_rogerson_1993.pdf`](hopenhayn_rogerson_1993.pdf).
 
 The model has two regimes:
 
@@ -48,7 +48,7 @@ Structural (from the paper): `β=0.8`, `θ=0.64`, `ρ=0.93`,
 targets (mean size 61.7, 5-yr exit 0.37, avg entrant size 7.5): `a=0.061`
 (mean log s = 0.87), `cf=15.15`, `ce=14.91`, entrants uniform over the bottom
 74% of the `s`-grid. A fixed log-`s` grid has its top state at `n*=5000`.
-(This is the same calibration used by [`../h92`](../h92).)
+(This is the same calibration used by [`../hopenhayn_1992`](../hopenhayn_1992).)
 
 ## Results
 
@@ -83,7 +83,7 @@ model collapses exactly to the 1-D benchmark (`w=1`, `z=1`, avg size 61.7).
 ## Files
 
 ```
-h93/
+hopenhayn_rogerson_1993/
 ├── calibrate_benchmark.m   tau=0 benchmark: calibrate + report Table 2 (1-D)
 ├── hr1993_2d.m             tau>0 driver: solve, close with household, Table 3
 ├── return_fn.m             per-period return p·s·n'^θ − w·n' − p·cf − w·g
@@ -94,13 +94,13 @@ h93/
 ├── household.m             representative-household closure (employment, welfare)
 ├── tauchen_fixed.m         Tauchen transition on a fixed (top = n*=5000) grid
 ├── README.md
-└── h93.pdf                 the paper
+└── hopenhayn_rogerson_1993.pdf                 the paper
 ```
 
 ## How to run
 
 ```matlab
-% From the h93/ directory:
+% From the hopenhayn_rogerson_1993/ directory:
 calibrate_benchmark   % tau=0 benchmark, reports Table 2
 hr1993_2d             % tau = 0,.1,.2 policy experiments, reports Table 3
 ```

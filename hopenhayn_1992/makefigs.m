@@ -1,6 +1,6 @@
 % =========================================================================
-% Figures for the single-type Hopenhayn (1992) model (h92), on the shared
-% HR1993 calibration. Saves PNGs to h92/figures/.
+% Figures for the single-type Hopenhayn (1992) model (hopenhayn_1992), on the shared
+% HR1993 calibration. Saves PNGs to hopenhayn_1992/figures/.
 %   Fig 1  Firm and employment size distributions (model vs HR data).
 %   Fig 2  Value function V(s), labor demand n*(s), and the exit threshold.
 %   Fig 3  Cohort survival and exit hazard by age.
@@ -20,7 +20,7 @@ nlow=floor(vfrac*p.ns); G=zeros(p.ns,1); G(1:nlow)=1/nlow; p.G=G;
 
 w=solve_wage(p); p.w=w;
 eq=stationary(p);
-V=vfn(p.F, p.p, p.w, p.cf, p);          % value function (h92 timing)
+V=vfn(p.F, p.p, p.w, p.cf, p);          % value function (hopenhayn_1992 timing)
 nstar=eq.nstar; mustar=eq.mustar; sstar=eq.sstar_ind;
 s=exp(svec);
 

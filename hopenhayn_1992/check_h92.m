@@ -12,7 +12,7 @@
 %           invariant, confirming ce and cf in goods leave the real
 %           allocation dependent on prices only through z = p/w.
 %
-% Run from the h92/ directory (all functions live there).
+% Run from the hopenhayn_1992/ directory (all functions live there).
 % =========================================================================
 clc ; clear ; close all ;
 
@@ -82,7 +82,7 @@ function pass = chk(name, got, ref, tol_rel, pass)
 end
 
 function params = build_params()
-    % HR1993 calibration (shared with ../h93); see main.m.
+    % HR1993 calibration (shared with ../hopenhayn_rogerson_1993); see main.m.
     params.beta    = 0.8 ;
     params.alpha   = 0.64 ;
     params.ns      = 100 ;
