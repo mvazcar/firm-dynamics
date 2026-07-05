@@ -21,9 +21,9 @@
 % emp_idx, cons_idx, and uac_idx (utility-adjusted consumption).
 % =========================================================================
 
-function H = household(R, P, Ntarget)
-p  = P.p ;
-c1 = @(r) r.Y - P.cf*r.Minc - P.ce*r.Ment ;      % net output per unit entry mass
+function H = household(R, params, Ntarget)
+p  = params.p ;
+c1 = @(r) r.Y - params.cf*r.Minc - params.ce*r.Ment ;      % net output per unit entry mass
 
 % Calibrate A at tau = 0 so that N(0) = Ntarget:
 %   N = w*Ld1/(A*p*c1) = Ntarget  ->  A = w0*Ld1(0)/(Ntarget*p*c1(0)).

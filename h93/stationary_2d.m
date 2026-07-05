@@ -4,15 +4,15 @@
 % transition over the (s, n_lag) state, solves for the stationary measure
 % mu = (I - T)^{-1} (M * entry), and returns the Table-3 firm statistics.
 %
-% Timing: a firm active at (s_j, n_lag_i) chooses n' = P.n(Npol(j,i)); at the
+% Timing: a firm active at (s_j, n_lag_i) chooses n' = params.n(Npol(j,i)); at the
 % start of next period it exits (before the shock) if survX(j,Npol(j,i))=0,
 % else it draws s' ~ F(j,.) and is active at (s', n'). Entrants (mass M=1 per
 % period) arrive at n_lag = 0 with s ~ v.
 % =========================================================================
 
-function r = stationary_2d(tau, w, P)
-nz = P.nz ; nn = P.na ; n = P.n ; Pi = P.Pi ; theta = P.theta ; s = P.s ;
-[~, Npol, survX, ~] = vfn_2d(tau, w, P) ;
+function r = stationary_2d(tau, w, params)
+nz = params.nz ; nn = params.na ; n = params.n ; Pi = params.Pi ; theta = params.theta ; s = params.s ;
+[~, Npol, survX, ~] = vfn_2d(tau, w, params) ;
 
 emp = n(Npol) ;                                 % nz x na, employment n'(j,i)
 lag = repmat(n', nz, 1) ;                        % nz x na, lagged employment n(i)
@@ -34,7 +34,7 @@ for i = 1:nn
     end
 end
 T   = sparse(II(1:c), JJ(1:c), VV(1:c), nS, nS) ;
-psi = zeros(nS,1) ; psi((1:nz)' + (i0-1)*nz) = P.v ;   % entry inflow (M = 1)
+psi = zeros(nS,1) ; psi((1:nz)' + (i0-1)*nz) = params.v ;   % entry inflow (M = 1)
 mu  = (speye(nS) - T) \ psi ;
 MU  = reshape(max(mu,0), nz, nn) ;
 
@@ -47,7 +47,7 @@ r.exit_rate = sum(sum(MU.*(~survpol)))/Mass ;
 r.Mass = Mass ;                                  % mass of active firms
 r.Ld   = N ;                                     % labor demand (employment)
 r.Y    = sum(sum(MU.*(s.*(emp.^theta)))) ;       % gross output
-r.Ment = sum(P.v) ;                              % mass of entrants (= 1)
+r.Ment = sum(params.v) ;                              % mass of entrants (= 1)
 r.Minc = Mass - r.Ment ;                         % incumbents (pay cf; entrants do not)
 
 hire = max(0, emp - lag) ; fire = max(0, lag - emp) ;

@@ -17,52 +17,52 @@
 clc ; clear ; close all ;
 
 % ---- Calibration (from the benchmark) ----------------------------------
-P.beta  = 0.8 ; P.theta = 0.64 ; P.rho = 0.93 ;
-P.sigma = (1-P.theta)*sqrt(0.53) ;
-P.mu    = 0.8707 ;  P.cf = 15.1537 ;  P.ce = 14.9087 ;
-P.p     = 1 ;
-P.vfrac = 0.74 ;
+params.beta  = 0.8 ; params.theta = 0.64 ; params.rho = 0.93 ;
+params.sigma = (1-params.theta)*sqrt(0.53) ;
+params.mu    = 0.8707 ;  params.cf = 15.1537 ;  params.ce = 14.9087 ;
+params.p     = 1 ;
+params.vfrac = 0.74 ;
 
 % ---- Grids and numerics ------------------------------------------------
-P.nz    = 100 ;     % productivity grid points  (100/250 matches HR tightly;
-P.na    = 250 ;     % employment grid points     50/150 runs faster for iterating)
-P.nzR   = 5.5 ;     % log-s grid range below the top
-P.nmax  = 5000 ;    % top productivity state implies n* = 5000 at p = w = 1
-P.tol   = 1e-7 ; P.maxit = 2000 ;
+params.nz    = 100 ;     % productivity grid points  (100/250 matches HR tightly;
+params.na    = 250 ;     % employment grid points     50/150 runs faster for iterating)
+params.nzR   = 5.5 ;     % log-s grid range below the top
+params.nmax  = 5000 ;    % top productivity state implies n* = 5000 at p = w = 1
+params.tol   = 1e-7 ; params.maxit = 2000 ;
 
 % ---- Productivity grid + transition (same construction as benchmark) ---
-logSmax = (1-P.theta)*log(P.nmax) - log(P.theta) ;
-P.logs  = linspace(logSmax - P.nzR, logSmax, P.nz)' ;
-P.s     = exp(P.logs) ;
-P.Pi    = tauchen_fixed(P.logs, P.mu, P.rho, P.sigma) ;
+logSmax = (1-params.theta)*log(params.nmax) - log(params.theta) ;
+params.logs  = linspace(logSmax - params.nzR, logSmax, params.nz)' ;
+params.s     = exp(params.logs) ;
+params.Pi    = tauchen_fixed(params.logs, params.mu, params.rho, params.sigma) ;
 
 % ---- Employment grid: 0 plus log-spaced up to a bit above nmax ---------
-P.n     = [0, logspace(log10(1e-3), log10(1.2*P.nmax), P.na-1)]' ;
-P.rev0  = P.s * (P.n'.^P.theta) ;       % nz x na, s(j)*n(l)^theta   (revenue/p)
-P.fire0 = max(0, P.n - P.n') ;          % na x na, max(0, n_lag(i) - n'(l))
+params.n     = [0, logspace(log10(1e-3), log10(1.2*params.nmax), params.na-1)]' ;
+params.rev0  = params.s * (params.n'.^params.theta) ;       % nz x na, s(j)*n(l)^theta   (revenue/p)
+params.fire0 = max(0, params.n - params.n') ;          % na x na, max(0, n_lag(i) - n'(l))
 
 % ---- Entrant distribution over s: uniform bottom vfrac -----------------
-nlow = floor(P.vfrac*P.nz) ;
-P.v  = zeros(P.nz,1) ; P.v(1:nlow) = 1/nlow ;
+nlow = floor(params.vfrac*params.nz) ;
+params.v  = zeros(params.nz,1) ; params.v(1:nlow) = 1/nlow ;
 
 % ---- Solve for each tau -------------------------------------------------
 taus = [0, 0.1, 0.2] ;
 R = cell(1,numel(taus)) ;
 for it = 1:numel(taus)
     tau   = taus(it) ;
-    w     = solve_wage_2d(tau, P) ;
-    R{it} = stationary_2d(tau, w, P) ;
-    R{it}.tau = tau ; R{it}.w = w ; R{it}.z = P.p/w ;
+    w     = solve_wage_2d(tau, params) ;
+    R{it} = stationary_2d(tau, w, params) ;
+    R{it}.tau = tau ; R{it}.w = w ; R{it}.z = params.p/w ;
     fprintf('tau=%.2f  w=%.4f  z=%.4f  avg_size=%.2f  exit=%.3f  turnover=%.3f\n', ...
-            tau, w, P.p/w, R{it}.avg_size, R{it}.exit_rate, R{it}.turnover) ;
+            tau, w, params.p/w, R{it}.avg_size, R{it}.exit_rate, R{it}.turnover) ;
 end
 
 % ---- Household closure (pins the scale; gives employment + welfare) -----
-H = household(R, P, 0.6) ;   % A calibrated so N = 0.6 at tau = 0
+H = household(R, params, 0.6) ;   % A calibrated so N = 0.6 at tau = 0
 
 % ---- Report Table 3 -----------------------------------------------------
 b = R{1} ;
-fprintf('\n===== HR1993 Table 3 (grid nz=%d, na=%d) =====\n', P.nz, P.na) ;
+fprintf('\n===== HR1993 Table 3 (grid nz=%d, na=%d) =====\n', params.nz, params.na) ;
 fprintf('  %-26s %8s %8s %8s | %s\n', '', 'tau=0', 'tau=.1', 'tau=.2', 'HR (0/.1/.2)') ;
 row  = @(name, f, hr) fprintf('  %-26s %8.3f %8.3f %8.3f | %s\n', name, f(R{1}), f(R{2}), f(R{3}), hr) ;
 rowH = @(name, x, hr)  fprintf('  %-26s %8.3f %8.3f %8.3f | %s\n', name, x(1), x(2), x(3), hr) ;

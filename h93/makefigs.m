@@ -14,41 +14,41 @@ outdir = fullfile(fileparts(mfilename('fullpath')), 'figures') ;
 if ~exist(outdir,'dir'), mkdir(outdir) ; end
 
 % ---- Calibration + grids (moderate resolution for figures) -------------
-P.beta=0.8; P.theta=0.64; P.rho=0.93; P.sigma=(1-0.64)*sqrt(0.53);
-P.mu=0.8707; P.cf=15.1537; P.ce=14.9087; P.p=1; P.vfrac=0.74;
-P.nz=60; P.na=200; P.nzR=5.5; P.nmax=5000; P.tol=1e-7; P.maxit=2000;
-logSmax=(1-P.theta)*log(P.nmax)-log(P.theta);
-P.logs=linspace(logSmax-P.nzR,logSmax,P.nz)'; P.s=exp(P.logs);
-P.Pi=tauchen_fixed(P.logs,P.mu,P.rho,P.sigma);
-P.n=[0, logspace(log10(1e-3),log10(1.2*P.nmax),P.na-1)]';
-P.rev0=P.s*(P.n'.^P.theta); P.fire0=max(0,P.n-P.n');
-nlow=floor(P.vfrac*P.nz); P.v=zeros(P.nz,1); P.v(1:nlow)=1/nlow;
+params.beta=0.8; params.theta=0.64; params.rho=0.93; params.sigma=(1-0.64)*sqrt(0.53);
+params.mu=0.8707; params.cf=15.1537; params.ce=14.9087; params.p=1; params.vfrac=0.74;
+params.nz=60; params.na=200; params.nzR=5.5; params.nmax=5000; params.tol=1e-7; params.maxit=2000;
+logSmax=(1-params.theta)*log(params.nmax)-log(params.theta);
+params.logs=linspace(logSmax-params.nzR,logSmax,params.nz)'; params.s=exp(params.logs);
+params.Pi=tauchen_fixed(params.logs,params.mu,params.rho,params.sigma);
+params.n=[0, logspace(log10(1e-3),log10(1.2*params.nmax),params.na-1)]';
+params.rev0=params.s*(params.n'.^params.theta); params.fire0=max(0,params.n-params.n');
+nlow=floor(params.vfrac*params.nz); params.v=zeros(params.nz,1); params.v(1:nlow)=1/nlow;
 
 taus=[0 0.1 0.2]; R=cell(1,3);
 for it=1:3
-    w=solve_wage_2d(taus(it),P);
-    R{it}=stationary_2d(taus(it),w,P); R{it}.w=w; R{it}.tau=taus(it);
+    w=solve_wage_2d(taus(it),params);
+    R{it}=stationary_2d(taus(it),w,params); R{it}.w=w; R{it}.tau=taus(it);
 end
-H=household(R,P,0.6);
+H=household(R,params,0.6);
 col=[0 0.30 0.65; 0.85 0.33 0.10; 0.30 0.65 0.20];   % tau colors
 
 % ---- Fig 1: decision-rule bands ----------------------------------------
-NL=nan(P.nz,3); NU=nan(P.nz,3); NPT=nan(P.nz,3);
+NL=nan(params.nz,3); NU=nan(params.nz,3); NPT=nan(params.nz,3);
 for it=1:3
     Np=R{it}.Npol;
-    for j=1:P.nz
-        inact=find(Np(j,:)==(1:P.na));            % n' = n_lag  (inaction)
-        NPT(j,it)=P.n(Np(j,1));                   % policy at n_lag=0 (hire target)
-        if ~isempty(inact), NL(j,it)=P.n(inact(1)); NU(j,it)=P.n(inact(end)); end
+    for j=1:params.nz
+        inact=find(Np(j,:)==(1:params.na));            % n' = n_lag  (inaction)
+        NPT(j,it)=params.n(Np(j,1));                   % policy at n_lag=0 (hire target)
+        if ~isempty(inact), NL(j,it)=params.n(inact(1)); NU(j,it)=params.n(inact(end)); end
     end
 end
 f1=figure('Position',[100 100 1080 460],'Color','w');
 % Left: the bands (zoomed to the mass of firms, log scale)
 subplot(1,2,1); hold on;
-plot(P.logs, NPT(:,1), '-', 'Color',col(1,:), 'LineWidth',2) ;             % tau=0 line
+plot(params.logs, NPT(:,1), '-', 'Color',col(1,:), 'LineWidth',2) ;             % tau=0 line
 for it=2:3
-    plot(P.logs, NL(:,it), '-',  'Color',col(it,:), 'LineWidth',1.8) ;
-    plot(P.logs, NU(:,it), '--', 'Color',col(it,:), 'LineWidth',1.8) ;
+    plot(params.logs, NL(:,it), '-',  'Color',col(it,:), 'LineWidth',1.8) ;
+    plot(params.logs, NU(:,it), '--', 'Color',col(it,:), 'LineWidth',1.8) ;
 end
 set(gca,'YScale','log','FontSize',12); grid on;
 xlabel('log productivity, log s'); ylabel('employment (log scale)');
@@ -60,7 +60,7 @@ xlim([1 3.5]); ylim([5 3e3]);
 subplot(1,2,2); hold on;
 for it=2:3
     wdt=(NU(:,it)-NL(:,it))./((NU(:,it)+NL(:,it))/2);
-    plot(P.logs, wdt, '-','Color',col(it,:),'LineWidth',2);
+    plot(params.logs, wdt, '-','Color',col(it,:),'LineWidth',2);
 end
 grid on; set(gca,'FontSize',12); xlabel('log productivity, log s');
 ylabel('band width / midpoint'); title('Inaction-band width (distortion)');
@@ -98,7 +98,7 @@ title('Employment size distribution'); ylabel('share of employment'); legend({'m
 savefig_png(f3, fullfile(outdir,'fig3_size_distribution.png')) ;
 
 % ---- Fig 4: cohort exit hazard (tau=0) ---------------------------------
-i0=1; psi=zeros(P.nz*P.na,1); psi((1:P.nz)'+(i0-1)*P.nz)=P.v;
+i0=1; psi=zeros(params.nz*params.na,1); psi((1:params.nz)'+(i0-1)*params.nz)=params.v;
 c=psi; S=zeros(1,16); S(1)=sum(c);
 for t=1:15, c=R{1}.T*c; S(t+1)=sum(c); end
 haz=(S(1:end-1)-S(2:end))./S(1:end-1);
@@ -112,7 +112,7 @@ savefig_png(f4, fullfile(outdir,'fig4_cohort_hazard.png')) ;
 % ---- Fig 5: stationary measure over (s, n_lag) at tau=0.2 --------------
 MU2=R{3}.MU; dens=MU2; dens(dens<1e-12)=NaN; dens=log10(dens);
 f5=figure('Position',[100 100 760 540],'Color','w');
-imagesc(P.logs, log10(max(P.n,1e-3)), dens', 'AlphaData',~isnan(dens')); axis xy;
+imagesc(params.logs, log10(max(params.n,1e-3)), dens', 'AlphaData',~isnan(dens')); axis xy;
 set(gca,'Color',[.95 .95 .95],'FontSize',12); colorbar;
 xlabel('log productivity, log s'); ylabel('log lagged employment, log n_{-1}');
 title('Stationary measure log_{10}\mu(s, n_{-1}) at \tau=0.2'); ylim([-1 4]);
