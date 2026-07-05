@@ -3,7 +3,8 @@
 A replication of **Hopenhayn & Rogerson (1993, JPE)**, "Job Turnover and Policy
 Evaluation: A General Equilibrium Analysis" — the Hopenhayn (1992) industry
 model in general equilibrium, used to evaluate a tax on job destruction
-(firing costs). The paper is [`hopenhayn_rogerson_1993.pdf`](hopenhayn_rogerson_1993.pdf).
+(firing costs). The article itself is not redistributed here; see the
+reference at the bottom of this file.
 
 The model has two regimes:
 
@@ -93,8 +94,7 @@ hopenhayn_rogerson_1993/
 ├── solve_wage_2d.m         free entry Σ v·W_e = p·ce, solved for w
 ├── household.m             representative-household closure (employment, welfare)
 ├── tauchen_fixed.m         Tauchen transition on a fixed (top = n*=5000) grid
-├── README.md
-└── hopenhayn_rogerson_1993.pdf                 the paper
+└── README.md
 ```
 
 ## How to run

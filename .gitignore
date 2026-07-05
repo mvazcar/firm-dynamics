@@ -17,3 +17,6 @@ code/benchmark.mat
 # OS junk
 .DS_Store
 Thumbs.db
+
+# Copyrighted papers kept locally, not redistributed
+*.pdf
