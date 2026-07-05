@@ -74,34 +74,42 @@ main         % solve and print the equilibrium; saves h92_benchmark.mat
 check_h92    % verification suite
 ```
 
-With the carried-over parameters (low type; `ce`, `cf` reinterpreted as
-goods), `main` prints:
+`main` prints:
 
 ```
 === Hopenhayn (1992): equilibrium (p fixed, solve for w) ===
   p (output price, numeraire) = 1
-  w (wage, solved)            = 1.05629782686508
-  z = p/w (relative price)    = 0.946702695553054
-  ce (hardcoded, goods)       = 0.0128154027583753
-  cf (hardcoded, goods)       = 2.29895028437494
-  E[V(s0)] at solved w        = 0.0128154027583753  (free entry: should equal p*ce)
-  entry-condition residual    = -3.469e-18
+  w (wage, solved)            = 0.936762657168836
+  z = p/w (relative price)    = 1.06750625929335
+  ce (hardcoded, goods)       = 14.9087
+  cf (hardcoded, goods)       = 15.1537
+  E[V(s0)] at solved w        = 14.9087  (free entry: should equal p*ce)
+  entry-condition residual    = 1.776e-15
   --
-  exit-threshold productivity = 0.155846 (grid index 69)
-  total employment N          = 9.66923
-  average firm size           = 21.8095
-  average entrant size        = 1.97206
-  startup rate                = 0.0985767
-  exit rate                   = 0.0985767
+  exit-threshold productivity = 1.29025 (grid index 60)
+  total employment N          = 201.136
+  average firm size           = 114.012
+  average entrant size        = 45.5648
+  startup rate                = 0.1149
+  exit rate                   = 0.1149
 ```
 
-(The solved wage is no longer `1`, as expected: this is a different model —
-single type, goods-denominated costs — so the carried-over `ce` no longer
-corresponds to the two-type labor-cost benchmark. `ce` and `cf` are hardcoded
-constants at the top of `main.m`; recalibrate them for your application.)
+## Calibration (shared with h93)
 
-The **Hopenhayn & Rogerson (1993)** calibration of this same model engine
-lives in a separate folder, [`../h93`](../h93).
+The parameters hardcoded at the top of [`main.m`](main.m) are the
+**Hopenhayn & Rogerson (1993)** calibration, taken from [`../h93`](../h93), so
+this model and the HR1993 model use the *same* parameterization and grid:
+`beta = 0.8`, `theta = alpha = 0.64`, `rho = 0.93`,
+`sigma_eps = (1-theta)*sqrt(0.53) = 0.262`, `a = 0.061` (mean log s = 0.87),
+`cf = 15.15`, `ce = 14.91` (goods), a fixed log-`s` grid with the top state at
+`n* = 5000`, and entrants uniform over the bottom 74% of the grid.
+
+The only difference between this folder and `../h93` is the **model**, not the
+numbers: `h92` uses the exit-AFTER-shock timing `V(s) = max(0, prof + beta*E[V])`
+(a firm exits the moment its value would go negative), while `h93` uses HR's
+exit-BEFORE-shock timing. On the shared calibration this yields, e.g., average
+firm size ≈ 114 and exit rate ≈ 0.11 here, versus ≈ 62 and ≈ 0.40 in `../h93`
+— a clean illustration of how much the exit-timing assumption matters.
 
 ## Verification
 

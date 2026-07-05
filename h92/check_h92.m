@@ -82,28 +82,29 @@ function pass = chk(name, got, ref, tol_rel, pass)
 end
 
 function params = build_params()
-    params.beta    = 1/1.04 ;
+    % HR1993 calibration (shared with ../h93); see main.m.
+    params.beta    = 0.8 ;
     params.alpha   = 0.64 ;
     params.ns      = 100 ;
     params.tol     = 1e-8 ;
-    params.maxiter = 100 ;
-    params.mstar   = 100 ;
-    params.ce      = 0.012815402758375272 ;  % goods
-    params.cf      = 2.298950284374937 ;      % goods
+    params.maxiter = 1000 ;
+    params.mstar   = 1 ;
+    params.ce      = 14.9087 ;   % goods
+    params.cf      = 15.1537 ;   % goods
 
-    s0        = -4.344376541584754;
-    sigma0    =  1.331137767741511;
-    rho       =  0.984150757243253;
-    sigma_eps =  0.245520815536363;
-    mu        = -2.431373086987380;
+    rho       = 0.93 ;
+    sigma_eps = (1-params.alpha)*sqrt(0.53) ;
+    mu        = 0.8707 ;
+    nmax      = 5000 ;
+    gridR     = 5.5 ;
+    vfrac     = 0.74 ;
 
-    [svec, F] = tauchen(mu, rho, sigma_eps, params.ns) ;
+    logSmax = (1-params.alpha)*log(nmax) - log(params.alpha) ;
+    svec = linspace(logSmax - gridR, logSmax, params.ns)' ;
     params.svec = svec ;
-    params.F    = transpose(F) ;
+    params.F    = transpose(tauchen_fixed(svec, mu, rho, sigma_eps)) ;
 
-    step = svec(2) - svec(1) ;
-    G = normcdf(svec + step/2, s0, sigma0) ;
-    G(2:end-1) = G(2:end-1) - G(1:end-2) ;
-    G(end) = 1 - sum(G(1:end-1)) ;
+    nlow = floor(vfrac*params.ns) ;
+    G = zeros(params.ns,1) ; G(1:nlow) = 1/nlow ;
     params.G = G ;
 end
