@@ -14,7 +14,7 @@ saveplots = 1; % 0: don't save plots; 1: save plots for slides (with title); 2: 
 load benchmark
 
 %% Prepare data summary stats
-datadir = '../data_summary_stats/' ;
+datadir = 'data_summary_stats/' ;
 
 % Read startup rate and other variables from the data so we can compare
 startup_data_1940_1962 = csvread(strcat(datadir, 'startup_rate_1940_1960.csv'), 1, 0) ;

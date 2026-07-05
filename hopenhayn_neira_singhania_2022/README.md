@@ -1,10 +1,11 @@
-# code — HNS22 recoded with explicit `p` and `w`
+# hopenhayn_neira_singhania_2022 — HNS22 recoded with explicit `p` and `w`
 
 A recoding of the benchmark firm-dynamics model of **Hopenhayn, Neira and
 Singhania (2022)** ("Firm Dynamics and the Declining Startup Rate", HNS22) in
 which the **output price `p` and the wage `w` appear explicitly**, instead of
-the single composite price `z = p/w` used in the original replication code
-(preserved unchanged under [`../hns22_raw`](../hns22_raw)).
+the single composite price `z = p/w` used in the original replication code.
+This folder is self-contained: the model, the data (`data_summary_stats/`) and
+the verification script (`check_benchmark.m`) all live here.
 
 ## What changed and why
 
@@ -32,7 +33,7 @@ depend only on `z = p/w`; the original code exploited this and carried `z`
 (named `zstar`), fixing `z = 1` and *computing* the entry cost `ce`. This
 recode carries `p` and `w` separately and reports `z = p/w` as a diagnostic.
 
-| | Original (`hns22_raw`) | Recode (`code`) |
+| | Original HNS22 | This recode |
 |---|---|---|
 | Price object | single `z = zstar` | explicit `p` **and** `w` |
 | Numeraire | `z = 1` fixed | `p = 1` fixed |
@@ -80,10 +81,9 @@ fully converged solve.
 ## How to run
 
 ```matlab
-% From code/ — default experiment (p=1, solve for w):
-main
-% From ../tests/ — verification (regression + homogeneity, all pass):
-check_benchmark
+% From this folder:
+main            % default experiment (p=1, solve for w)
+check_benchmark % verification (regression + homogeneity, all pass)
 ```
 
 `check_benchmark` confirms the recode reproduces the original z-based
@@ -91,7 +91,7 @@ benchmark to relative error `0`, and that rescaling `p` leaves every physical
 moment invariant.
 
 `maketables.m` reproduces the paper's Table 6, which needs alternative-
-experiment output files not shipped in `hns22_raw`; Tables 3–5 and `makefigs.m`
+experiment output files not shipped with the original; Tables 3–5 and `makefigs.m`
 work from the `benchmark.mat` that `main.m` saves.
 
 ## Reference

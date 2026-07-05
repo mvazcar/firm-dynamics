@@ -5,8 +5,6 @@
 slprj/
 octave-workspace
 
-# Saved model output produced by main.m
-code/benchmark.mat
 
 # Generated EPS/vector output (the hopenhayn_1992/ and hopenhayn_rogerson_1993/ figure PNGs are tracked)
 *.eps

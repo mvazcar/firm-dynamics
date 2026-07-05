@@ -11,7 +11,7 @@ for the wage `w` with `fzero`.
 
 | Folder | Model | What it does |
 |---|---|---|
-| [`code/`](code/) | **HNS22 (2022)** recode | Rewrites the Hopenhayn–Neira–Singhania (2022) replication with `p, w` explicit; reproduces the published benchmark to machine precision. Original code in [`hns22_raw/`](hns22_raw/), tests in [`tests/`](tests/). |
+| [`hopenhayn_neira_singhania_2022/`](hopenhayn_neira_singhania_2022/) | **HNS (2022)** | The Hopenhayn–Neira–Singhania (2022) "declining startup rate" replication, recoded with `p, w` explicit; reproduces the published benchmark to machine precision. Data and the regression/homogeneity check are inside the folder. |
 | [`hopenhayn_1992/`](hopenhayn_1992/) | **Hopenhayn (1992)** | Lean single-type stationary firm-dynamics model (no labor-force growth, costs in goods). |
 | [`hopenhayn_rogerson_1993/`](hopenhayn_rogerson_1993/) | **Hopenhayn & Rogerson (1993)** | Full replication with firing costs: a calibrated `τ=0` benchmark (Table 2), the 2-D `(s, n₋₁)` firing-cost model, and a representative household reproducing the job-turnover / productivity / welfare experiments (Table 3). |
 
@@ -47,12 +47,10 @@ Each folder is self-contained and has its own `README.md`, a `makefigs.m`
 
 ```
 firm-dynamics/
-├── code/                       HNS22 recoded with explicit p, w   (see code/README.md)
-├── hns22_raw/                  original HNS22 replication code (reference, untouched)
-├── data_summary_stats/         data series used by code/
-├── tests/                      regression + homogeneity checks for code/
-├── hopenhayn_1992/             Hopenhayn (1992) model             (see its README.md)
-└── hopenhayn_rogerson_1993/    Hopenhayn & Rogerson (1993)        (see its README.md)
+├── hopenhayn_neira_singhania_2022/   HNS (2022), recoded with explicit p, w
+│                                     (model + data_summary_stats/ + check inside)
+├── hopenhayn_1992/                   Hopenhayn (1992) model
+└── hopenhayn_rogerson_1993/          Hopenhayn & Rogerson (1993)
 ```
 
 ## Requirements

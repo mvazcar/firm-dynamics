@@ -1,12 +1,12 @@
 # hopenhayn_1992 — single-type Hopenhayn (1992) model
 
 A lean, single-type **Hopenhayn (1992)** stationary firm-dynamics model,
-obtained from the explicit-`p`/`w` recode in [`../code`](../code) (the HNS22
+obtained from the explicit-`p`/`w` recode in [`../hopenhayn_neira_singhania_2022`](../hopenhayn_neira_singhania_2022) (the HNS22
 benchmark) by stripping it down to the classic setup. It keeps the explicit
 output price `p` and wage `w`, and the "fix `p = 1`, solve for `w` given a
 hardcoded entry cost" default.
 
-## What changed relative to `../code`
+## What changed relative to `../hopenhayn_neira_singhania_2022`
 
 | Change | Detail |
 |---|---|
@@ -128,7 +128,7 @@ entry equals exit in steady state, and **homogeneity** — rescaling `p` leaves
 
 ## Value-function iteration cap
 
-As in `../code`, `vfn.m` caps the iteration at `params.maxiter` (default
+As in `../hopenhayn_neira_singhania_2022`, `vfn.m` caps the iteration at `params.maxiter` (default
 `100`). Raise it (e.g. `5000`) for a fully converged solve when running
 counterfactuals.
 

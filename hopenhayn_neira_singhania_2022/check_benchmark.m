@@ -16,9 +16,8 @@
 clc ; clear ; close all ;
 
 here    = fileparts(mfilename('fullpath')) ;
-codedir = fullfile(here, '..', 'code') ;
-datadir = fullfile(here, '..', 'data_summary_stats', filesep) ;
-addpath(codedir) ;
+datadir = fullfile(here, 'data_summary_stats', filesep) ;   % data lives in this folder
+addpath(here) ;                                             % model functions are here
 
 tol_rel = 1e-6 ;   % relative tolerance for the regression checks
 

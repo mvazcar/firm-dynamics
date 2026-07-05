@@ -1,24 +1,46 @@
 % =========================================================================
-% This program solves the benchmark model in Hopenhayn, Neira and
-% Singhania (2022)
+% Benchmark model of Hopenhayn, Neira and Singhania (2022), recoded so that
+% the output price p and the wage w appear explicitly instead of the single
+% composite price z = p/w used in the original code.
+%
+% DEFAULT EXPERIMENT (this file):
+%   * Fix the output price p = 1 (numeraire).
+%   * Hardcode the entry cost ce (in units of labor); see CE below.
+%   * Solve the free-entry condition for the wage w (solve_wage).
+%
+% Because firms' decisions depend on prices only through z = p/w, free entry
+% pins down the ratio z; fixing p = 1 turns "solve for the entry-clearing
+% price" into "solve for the wage w", with z = p/w recovered afterwards.
+%
+% The hardcoded ce below is the value the ORIGINAL HNS22 code produced at
+% z = 1. With p = 1 the solver therefore returns w = 1 (hence z = 1) and this
+% file reproduces the published benchmark exactly. Change CE to study how the
+% equilibrium wage and firm dynamics respond to a different entry cost.
 % =========================================================================
-%% -------------------------------------------------------------------------
-% Initialize parameters and other model primitives
-% -------------------------------------------------------------------------
 clc
 clear
 close all
 
-set(0,'defaulttextInterpreter','latex') 
+set(0,'defaulttextInterpreter','latex')
 
 beta  = 1/1.04 ; % Discount rate
 alpha = 0.64   ; % Labor share
 g     = 0.01   ; % Trend in the labor force
 ns    = 100    ; % Number of points in grid
 tol   = 1e-8   ; % Specify tolerance
+maxiter = 100  ; % Value-function-iteration cap. HNS22 uses 100 (which does
+                 % NOT reach tol; kept so the calibrated benchmark reproduces
+                 % exactly). Raise it (e.g. 5000) for a fully converged solve.
 
-zstar = 1 ;   % Equilibrium output price 
+% ---- Prices ------------------------------------------------------------
+p     = 1 ;   % Output price (numeraire). Held fixed; the wage w is solved for.
 mstar = 100 ; % Mass of entrants in steady state
+
+% ---- Hardcoded entry cost (in units of labor) --------------------------
+% This is the entry cost the original code computed at z = 1 (full double
+% precision). With p = 1 the free-entry wage comes out to w = 1, so the
+% recoded model reproduces the benchmark. Edit CE for counterfactuals.
+CE = 0.012815402758375272 ;
 
 % Create a structure that we want to transfer to functions
 params.beta = beta ;
@@ -26,15 +48,17 @@ params.alpha = alpha ;
 params.g = g ;
 params.tol = tol ;
 params.ns = ns ;
-params.zstar = zstar ;
+params.maxiter = maxiter ;
+params.p = p ;         % output price (was params.zstar)
+params.ce = CE ;       % entry cost, hardcoded (was computed by stationary)
 params.mstar = mstar ;
 
 %% Labor Force data
-datadir = '../data_summary_stats/' ;
+datadir = 'data_summary_stats/' ;
 fname = 'US_laborforce.csv' ;
 lf_filename = strcat(datadir, fname) ;
 
-%% 
+%%
 % -------------------------------------------------------------------------
 % Estimated Parameters
 % -------------------------------------------------------------------------
@@ -54,7 +78,7 @@ s0        = -4.344376541584754;   % Mean of startup distribution (\mu_g)
 sigma0    = 1.331137767741511;    % Standard deviation of startup distribution (\sigma_G^2)
 rho       = 0.984150757243253;    % Persistence  of AR1
 sigma_eps = 0.245520815536363;    % Standard deviation of AR1 innovations
-mu_l      = -2.431373086987380;   % Long-run AR1 mean of high type  
+mu_l      = -2.431373086987380;   % Long-run AR1 mean of high type
 mu_h      = -1.436111629482697;   % Long-run AR1 mean of high type
 cf_l      = 2.298950284374937;    % Fixed cost - intercept
 cf_h      = 24.308026243791222;   % Fixed cost - intercept
@@ -68,7 +92,7 @@ params.cf_l = cf_l ;
 params.sigma0 = sigma0 ;
 params.omega_h = omega_h;
 
-[svec, F_l, F_h] = tauchen2(mu_l, mu_h, rho, sigma_eps, ns) ; 
+[svec, F_l, F_h] = tauchen2(mu_l, mu_h, rho, sigma_eps, ns) ;
 F_l = transpose(F_l) ; % Transpose so that column sum to one
 F_h = transpose(F_h) ; % Transpose so that column sum to one
 
@@ -84,19 +108,36 @@ G(2:end-1) = G(2:end-1) - G(1:end-2) ;
 G(end) = 1 - sum(G(1:end-1)) ;
 params.G = G ;
 
-% Solve for stationary equilibrium in 1940, store results in stateqbm
-stateqbm = stationary(params) ; 
+% -------------------------------------------------------------------------
+% Solve for the equilibrium wage given p and the hardcoded ce, then solve
+% the stationary equilibrium in 1940.
+% -------------------------------------------------------------------------
+w = solve_wage(params) ;   % free-entry wage (with p fixed)
+params.w = w ;
+
+stateqbm = stationary(params) ;
 ce = stateqbm.ce;
 
+fprintf('\n=== Equilibrium prices (default: p fixed, solve for w) ===\n') ;
+fprintf('  p (output price, numeraire) = %.15g\n', stateqbm.p) ;
+fprintf('  w (wage, solved)            = %.15g\n', stateqbm.w) ;
+fprintf('  z = p/w (relative price)    = %.15g\n', stateqbm.z) ;
+fprintf('  ce (hardcoded, labor units) = %.15g\n', stateqbm.ce) ;
+fprintf('  E[V(s0)] at solved w        = %.15g  (free entry: should equal w*ce)\n', ...
+        stateqbm.entry_value_check) ;
+fprintf('  w*ce (dollar entry cost)    = %.15g\n', stateqbm.w*stateqbm.ce) ;
+fprintf('  entry-condition residual    = %.3e\n\n', ...
+        stateqbm.entry_value_check - stateqbm.w*stateqbm.ce) ;
+
 % Feed labor force data series to obtain moments, store results in bm
-results = feed_data(params, stateqbm, lf_filename) ; 
+results = feed_data(params, stateqbm, lf_filename) ;
 bm = results.tab ;
 
 % Store parameters
-x_bench(1) = ce        ;    
-x_bench(2) = s0        ;   
-x_bench(3) = sigma0    ;  
-x_bench(4) = rho       ; 
+x_bench(1) = ce        ;
+x_bench(2) = s0        ;
+x_bench(3) = sigma0    ;
+x_bench(4) = rho       ;
 x_bench(5) = sigma_eps ;
 x_bench(6) = mu_l      ;
 x_bench(7) = mu_h      ;
@@ -112,11 +153,8 @@ Value = x_bench';
 fname = 'US_laborforce_norise.csv' ;
 lf_filename_norise = strcat(datadir, fname) ;
 
-params_norise = params ; 
-stateqbm_norise = stationary(params_norise) ;
-
 results_norise = feed_data(params, stateqbm, lf_filename_norise) ;
-norise = results_norise.tab ; 
+norise = results_norise.tab ;
 
 %% -------------------------------------------------------------------------
 % The case with No Transition in labor force: feeds a constant 2014 lfg.
@@ -124,11 +162,8 @@ norise = results_norise.tab ;
 fname = 'US_laborforce_notransition.csv' ;
 lf_filename_notrans = strcat(datadir, fname) ;
 
-params_notrans = params ; 
-stateqbm_notrans = stationary(params_notrans) ;
-
 results_notrans = feed_data(params, stateqbm, lf_filename_notrans) ;
-notrans = results_notrans.tab ; 
+notrans = results_notrans.tab ;
 
 %% Save output
 save benchmark
