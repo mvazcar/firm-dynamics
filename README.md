@@ -68,3 +68,10 @@ that folder's README (e.g. `main`, `hr1993_2d`, `calibrate_benchmark`).
   A General Equilibrium Analysis." *Journal of Political Economy* 101(5).
 - Hopenhayn, H., Neira, J., and Singhania, R. (2022). "Firm Dynamics and the
   Declining Startup Rate." *Econometrica*.
+
+## Third-party material
+
+The code here is mine and is in the public domain (see [LICENSE](LICENSE)). The summary-statistics
+data under `hopenhayn_neira_singhania_2022/data_summary_stats/` comes from the replication package
+of Hopenhayn, Neira and Singhania (2022) and is **not** covered by that dedication; it remains under
+its original terms.
